@@ -1,13 +1,8 @@
 #!/usr/bin/env python3
-
-
 import os
-
 import click
 import mistune
-from mistune.scanner import escape
 import base64
-import magic
 
 class sf_html_render(mistune.HTMLRenderer):
     # This is a custom mistune extension that will override the default
@@ -16,7 +11,7 @@ class sf_html_render(mistune.HTMLRenderer):
 
     def codespan(self, text):
         """override the default `code` block handler"""
-        return '<code style="font-size:1em;color:#00f;">' + escape(text) + "</code>"
+        return '<code style="font-size:1em;color:#00f;">' + mistune.escape(text) + "</code>"
 
     def paragraph(self, text):
         """override the default paragraph handler"""
@@ -30,7 +25,6 @@ class sf_html_render(mistune.HTMLRenderer):
             with open(url, "rb") as image_file:
                 encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
 
-            mimetype = magic.from_file(url, mime=True)
             url = f'data:{mimetype};base64,{encoded_string}'
 
         return f'<img alt="{alt}" title="{title}" src="{url}" style="margin-top: 5px; margin-bottom: 5px;" />'
@@ -46,7 +40,7 @@ class sf_html_render(mistune.HTMLRenderer):
         html = '<pre class="ckeditor_codeblock"'
         if info is not None:
             info = info.strip()
-        return html + ">" + escape(code) + "</pre>\n"
+        return html + ">" + mistune.escape(code) + "</pre>\n"
 
 
 @click.command(help="Plese supply the path to a KB article in Markdown format to parse")
